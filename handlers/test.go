@@ -59,14 +59,15 @@ func (h *textHandler) HandleTest(obj object.MessageNewObject, groupID int) {
 	message := vk_objects.NewMessage()
 	message.UserID = &(obj.FromID)
 	message.RandomId = rand.Int31()
-	message.Message = text
 
 	for i, val := range testMap[u.TestPhase.Int].Answers {
 		if i%2 == 0 {
 			message.Keyboard.AddRow()
 		}
 		message.Keyboard.AddTextButton(val.Text, "", secondaryColor)
+		text += "\n" + val.Text
 	}
+	message.Message = text
 	message.Keyboard.AddRow()
 	message.Keyboard.AddTextButton("Повторить вопрос", "", primaryColor)
 
@@ -98,14 +99,16 @@ func (h *textHandler) testUser(obj object.MessageNewObject, u *models.User) {
 	message := vk_objects.NewMessage()
 	message.UserID = &(obj.FromID)
 	message.RandomId = rand.Int31()
-	message.Message = testMap[u.TestPhase.Int].Question
-
+	text := testMap[u.TestPhase.Int].Question
 	for i, val := range testMap[u.TestPhase.Int].Answers {
 		if i%2 == 0 {
 			message.Keyboard.AddRow()
 		}
+		text += "\n" + val.Text
 		message.Keyboard.AddTextButton(val.Text, "", secondaryColor)
 	}
+
+	message.Message = text
 	message.Keyboard.AddRow()
 	message.Keyboard.AddTextButton("Повторить вопрос", "", primaryColor)
 
@@ -127,7 +130,11 @@ func (h *textHandler) testResult(obj object.MessageNewObject, u *models.User) {
 	message := vk_objects.NewMessage()
 	message.UserID = &(obj.FromID)
 	message.RandomId = rand.Int31()
-	message.Message = getText(u) + "\n\nПодойди к столу с плюшками, чтобы забрать заслуженный приз!"
+	message.Message = getText(u) +
+		"\n\nЗа прохождение теста наш партнер Anvio.com дарит тебе промокод на скидку 20% на игру в VR!" +
+		"\nТвой промокод: VRBONCH2019" +
+		"\nСкидка действует со 2 по 16 сентября!" +
+		"\nИ не забудь подойти к столу с плюшками, чтобы забрать заслуженный приз!"
 	message.Keyboard.AddRow()
 	message.Keyboard.AddTextButton("Я иду к организаторам за призом!", "", positiveColor)
 
